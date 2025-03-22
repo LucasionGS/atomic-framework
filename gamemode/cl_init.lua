@@ -1,5 +1,5 @@
 include("shared.lua")
 
 function GM:Initialize()
-    ATOM:Print("atomic: Client initialized.")
+    print("atomic: Client initialized.")
 end

@@ -18,12 +18,12 @@ local port     = MYSQL_PORT     or  3306
 SQL = mysqloo.connect(hostname, username, password, database, port, socket)
 
 function SQL:onConnected()
-    ATOM:Print("Connected to the MySQL database!")
+    print("Connected to the MySQL database!")
 end
 
 function SQL:onConnectionFailed(err)
-    ATOM:Error("Failed to connect to the MySQL database:")
-    ATOM:Error(err)
+    print("Failed to connect to the MySQL database:")
+    print(err)
 end
 
 SQL:connect()

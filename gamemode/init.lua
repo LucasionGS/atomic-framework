@@ -7,7 +7,7 @@ include("atomic/config.lua")
 GM.DataFolder = "atomrp"
 
 if not file.Exists(GM.DataFolder, "DATA") then
-    ATOM:Print("Creating data folder")
+    print("Creating data folder")
     file.CreateDir(GM.DataFolder)
 end
 

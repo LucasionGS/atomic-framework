@@ -1,3 +1,3 @@
 function GM:Initialize()
-    ATOM:Print("Atomic Framework: Server initialized.")
+    print("Atomic Framework: Server initialized.")
 end
