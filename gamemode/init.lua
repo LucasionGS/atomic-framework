@@ -4,11 +4,10 @@ AddCSLuaFile("atomic/config.lua")
 include("atomic/config.lua")
 
 -- Data folder
-GM.DataFolder = "atomrp"
 
-if not file.Exists(GM.DataFolder, "DATA") then
+if not file.Exists(ATOMIC.Config.DataFolder, "DATA") then
     print("Creating data folder")
-    file.CreateDir(GM.DataFolder)
+    file.CreateDir(ATOMIC.Config.DataFolder)
 end
 
 ---- Shared files -- Also defines ATOMIC global for both client and server

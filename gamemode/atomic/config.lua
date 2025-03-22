@@ -10,3 +10,7 @@ if ATOMIC.Config.GamemodeFolderName == nil then
 end
 
 ATOMIC.Config.DataFolder = ATOMIC.Config.DataFolder or ATOMIC.Config.GamemodeFolderName or nil
+
+if ATOMIC.Config.DataFolder == nil then
+    print("ERROR: Data folder not set. Please set ATOMIC.Config.DataFolder in config/config.lua.")
+end

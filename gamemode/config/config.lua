@@ -9,6 +9,6 @@ ATOMIC.Config = {
     Author = "Lucasion",
     -- The folder name of the gamemode. This should match the name of the folder in the gamemodes/ directory.
     GamemodeFolderName = "atomic",
-    -- The data folder for the gamemode. Used for GM.DataFolder (Default is GamemodeFolderName)
+    -- The data folder for the gamemode. Used for Server Data Folder (Default is GamemodeFolderName)
     DataFolder = nil,
 }
