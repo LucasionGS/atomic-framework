@@ -1,0 +1,21 @@
+{
+  "sqltools.connections": [
+    {
+      "mysqlOptions": {
+        "authProtocol": "default"
+      },
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 3306,
+      "driver": "MySQL",
+      "name": "Local DB",
+      "database": "atomrp",
+      "username": "atomrp",
+      "askForPassword": true
+    }
+  ],
+  "[glua]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 4
+  }
+}
