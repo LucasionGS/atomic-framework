@@ -16,12 +16,11 @@ local port     = MYSQL_PORT     or  3306
 SQL = mysqloo.connect(hostname, username, password, database, port, socket)
 
 function SQL:onConnected()
-    print("Connected to the MySQL database!")
+    hook.Run("SV_ATOMIC:DatabaseConnected")
 end
 
 function SQL:onConnectionFailed(err)
-    print("Failed to connect to the MySQL database:")
-    print(err)
+    hook.Run("SV_ATOMIC:DatabaseConnectionFailed", err)
 end
 
 SQL:connect()

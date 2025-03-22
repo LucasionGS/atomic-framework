@@ -1,5 +1,10 @@
 DeriveGamemode("sandbox")
 ATOMIC = ATOMIC or {} -- Global for Atomic Framework. Important it's initialized early.
+
+-- Load config
+AddCSLuaFile("config/config.lua")
+include("config/config.lua")
+-- Process config
 AddCSLuaFile("atomic/config.lua")
 include("atomic/config.lua")
 
@@ -14,16 +19,16 @@ end
 AddCSLuaFile("shared.lua")
 include("shared.lua")
 
----- Client files
-AddCSLuaFile("cl_init.lua")
-
 ---- Server files
 -- Load the database handler.
 -- Accessed via Database global for simplified access, SQL global for direct mysqloo access.
-include("database/Database.lua")
+include("atomic/database/Database.lua")
 
 -- Load the init server logic
 include("sv_init.lua")
+
+---- Client files
+AddCSLuaFile("cl_init.lua")
 
 ---- Settings
 -- Realistic fall damage

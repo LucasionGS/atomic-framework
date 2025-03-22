@@ -1,6 +1,3 @@
-AddCSLuaFile("../config/config.lua")
-include("../config/config.lua")
-
 -- Process configuration
 ATOMIC.Config = ATOMIC.Config or {}
 ATOMIC.Config.GamemodeFolderName = ATOMIC.Config.GamemodeFolderName or nil
