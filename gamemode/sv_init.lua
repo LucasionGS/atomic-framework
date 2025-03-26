@@ -4,7 +4,6 @@ end
 
 hook.Add("SV_ATOMIC:DatabaseConnected", "Atomic_SuccessfullyConnected", function()
     print("Atomic Framework: Database connected.")
-    print(type(GAMEMODE.IsSandboxDerived))
     for model in pairs(Database.Models) do
         local m = Database:Model(model)
         if not m:TableExists():Wait() then
