@@ -1,4 +1,3 @@
-DeriveGamemode("sandbox")
 ATOMIC = ATOMIC or {} -- Global for Atomic Framework. Important it's initialized early.
 
 -- Load config

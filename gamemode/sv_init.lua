@@ -4,42 +4,40 @@ end
 
 hook.Add("SV_ATOMIC:DatabaseConnected", "Atomic_SuccessfullyConnected", function()
     print("Atomic Framework: Database connected.")
-
-    -- Database:CreateTable("players", {
-    --     "id INT NOT NULL AUTO_INCREMENT",
-    --     "steamid64 VARCHAR(255) NOT NULL",
-    --     "name VARCHAR(255) NOT NULL",
-    --     "playtime INT NOT NULL",
-    --     "createdAt DATETIME NOT NULL",
-    --     "lastJoin DATETIME NOT NULL",
-    --     "lastLeave DATETIME NOT NULL",
-    --     "PRIMARY KEY (id)"
-    -- })
-    Database:CreateQueryInterface():Table("players"):Insert(
-        {
-            steamid64 = "1234567890",
-            name = "Lucasion",
-            playtime = 0,
-            createdAt = os.date("%Y-%m-%d %H:%M:%S"),
-            lastJoin = os.date("%Y-%m-%d %H:%M:%S"),
-            lastLeave = os.date("%Y-%m-%d %H:%M:%S")
-        },
-        {
-            steamid64 = "0987654321",
-            playtime = 0,
-            lastJoin = os.date("%Y-%m-%d %H:%M:%S"),
-            createdAt = os.date("%Y-%m-%d %H:%M:%S"),
-            name = "Lucasion2",
-            lastLeave = os.date("%Y-%m-%d %H:%M:%S")
-        }
-    ):Run():Wait()
-
-    -- Database:CreateQueryInterface():Table("players"):Select("*"):Where({"steamid64 = ?", "1234567890"}):Run(function(data)
-    --     PrintTable(data)
-    -- end)
+    print(type(GAMEMODE.IsSandboxDerived))
+    for model in pairs(Database.Models) do
+        local m = Database:Model(model)
+        if not m:TableExists():Wait() then
+            print("Creating table for model: " .. model)
+            m:CreateTable()
+        end
+    end
 end)
+
 
 hook.Add("SV_ATOMIC:DatabaseConnectionFailed", "Atomic_FailureConnecting", function(err)
     print("Failed to connect to the MySQL database:")
     print(err)
+end)
+
+
+-- Once a player spawns for the first time, Load their data or create them.
+hook.Add("PlayerInitialSpawn", "Atomic_PlayerInitialSpawn", function(ply)
+    Database:Model("players"):Insert(
+        {
+            steamid64 = ply:SteamID64(),
+            name = ply:Nick()
+        }
+    ):Run(function()
+        print("Player inserted: " .. ply:Nick())
+    end)
+end)
+
+
+-- Setup loadout
+hook.Add("PlayerLoadout", "Atomic_PlayerLoadout", function(ply)
+    ply:Give("weapon_physgun")
+    ply:Give("gmod_tool")
+
+    return false
 end)
