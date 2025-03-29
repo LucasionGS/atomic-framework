@@ -59,3 +59,30 @@ Database:CreateModel(
         "PRIMARY KEY (id)"
     }
 )
+
+Database:CreateModel(
+    "inventories", 
+    {
+        "id",
+        "steamid64",
+        "inventoryId",
+        "itemId",
+        "slotx",
+        "sloty",
+        "amount",
+        "createdAt"
+    },
+    {
+        "id INT NOT NULL AUTO_INCREMENT",
+        "steamid64 INT NOT NULL",
+        "inventoryId INT NOT NULL",
+        "itemId INT NOT NULL",
+        "slotx INT NOT NULL",
+        "sloty INT NOT NULL",
+        "amount INT NOT NULL DEFAULT 1",
+        "createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+        "PRIMARY KEY (id)",
+        "FOREIGN KEY (steamid64) REFERENCES players(steamid64)",
+        "FOREIGN KEY (itemId) REFERENCES items(id)"
+    }
+)

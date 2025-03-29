@@ -92,9 +92,15 @@ function Database:CreateQueryInterface(tableName)
         return self
     end
 
-    function queryObject:Update(tableName, ...)
-        self:Table(tableName)
+    function queryObject:Update(...)
         self.updateData = {...}
+        return self
+    end
+
+    function queryObject:UpdateEntry(primaryKey, ...)
+        self.updateData = {...}
+        self.where = self.where or {}
+        self.where[Database.PrimaryKey] = primaryKey
         return self
     end
 
@@ -266,6 +272,20 @@ function Database:CreateModel(tableName, columnsOrder, columnsDefinition)
 
     function model:Update(...)
         return Database:CreateQueryInterface(self.tableName):Update(...)
+    end
+    
+    function model:UpdateEntry(primaryKey, ...)
+        return Database:CreateQueryInterface(self.tableName):UpdateEntry(primaryKey, ...)
+    end
+
+    function model:Upsert(data)
+        local int = Database:CreateQueryInterface(self.tableName)
+        if (data[Database.PrimaryKey]) then
+            int:UpdateEntry(data[Database.PrimaryKey], data)
+        else
+            int:Insert(data)
+        end
+        return int
     end
 
     function model:Where(...)
