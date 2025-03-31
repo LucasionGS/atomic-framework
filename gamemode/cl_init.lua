@@ -1,5 +1,1 @@
-include("shared.lua")
-
-function GM:Initialize()
-    print("atomic: Client initialized.")
-end
+include("atomic/cl_init.lua")

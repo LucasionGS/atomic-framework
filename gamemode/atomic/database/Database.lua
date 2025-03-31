@@ -49,7 +49,7 @@ function Database:CreateTable(tableName, columns, callback)
         query = query .. v .. ","
     end
     query = query:sub(1, -2) .. ")"
-    Database:Query(query, callback)
+    return Database:Query(query, callback)
 end
 
 --[[
