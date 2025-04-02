@@ -15,4 +15,6 @@ ATOMIC.Config = {
     DataFolder = nil,
     -- The column name used for the primary key in the database tables. Used for querying and updating rows.
     DatabasePrimaryKey = "id",
+    -- Debug mode. If true, will print debug information to the console.
+    Debug = true,
 }

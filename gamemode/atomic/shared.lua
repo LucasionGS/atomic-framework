@@ -1,9 +1,5 @@
 DeriveGamemode("sandbox")
 
-ATOMIC = ATOMIC or {} -- Global for Atomic Framework
-include("../config/config.lua")
-include("config.lua")
-
 GM.Name = ATOMIC.Config.Name
 GM.Author = ATOMIC.Config.Author
 GM.Sandbox = true
@@ -14,7 +10,12 @@ function ATOMIC:Debug(...)
     end
 end
 
+function ATOMIC:Error(...)
+    ErrorNoHalt("[Atomic Error]", ...)
+end
 
--- function GM:SpawnMenuOpen()
---     return true -- allows the sandbox spawn menu (Q menu)
--- end
+
+function GM:SpawnMenuOpen()
+    notification.AddLegacy("Atomic Framework: Spawn menu is disabled.", NOTIFY_GENERIC, 5)
+    return false -- allows the sandbox spawn menu (Q menu)
+end

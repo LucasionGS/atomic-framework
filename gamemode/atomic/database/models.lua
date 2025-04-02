@@ -74,7 +74,7 @@ Database:CreateModel(
     },
     {
         "id INT NOT NULL AUTO_INCREMENT",
-        "steamid64 INT NOT NULL",
+        "steamid64 VARCHAR(255) NOT NULL",
         "inventoryId INT NOT NULL",
         "itemId INT NOT NULL",
         "slotx INT NOT NULL",

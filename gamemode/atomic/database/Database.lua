@@ -8,7 +8,7 @@ Database.Debug = ATOMIC.Config.Debug or false
 --[[
     Executes a query on the database and calls the callback function with the data.
 ]]
-function Database:Query(query, values, callback)
+function Database:Query(query, values, callback, onErrorCallback)
     if type(values) == "function" then
         callback = values
         values = nil
@@ -36,6 +36,7 @@ function Database:Query(query, values, callback)
 
     function q:onError(err)
         ATOMIC:Debug("Query failed: " .. err)
+        if onErrorCallback then onErrorCallback(err) end
     end
 
     q:start()
@@ -49,6 +50,7 @@ function Database:CreateTable(tableName, columns, callback)
         query = query .. v .. ","
     end
     query = query:sub(1, -2) .. ")"
+    
     return Database:Query(query, callback)
 end
 
