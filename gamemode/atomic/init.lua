@@ -1,6 +1,6 @@
 -- Process config
-AddCSLuaFile("config.lua")
-include("config.lua")
+AddCSLuaFile("sh_config.lua")
+include("sh_config.lua")
 
 ---- Shared files -- Also defines ATOMIC global for both client and server
 AddCSLuaFile("shared.lua")

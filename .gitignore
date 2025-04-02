@@ -1,2 +1,2 @@
-gamemode/config/mysql.local.lua
+gamemode/config/sv_mysql.local.lua
 *.code-workspace

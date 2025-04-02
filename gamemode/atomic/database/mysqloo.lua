@@ -1,11 +1,11 @@
 -- https://github.com/FredyH/MySQLOO/releases
 -- "gmsv_mysqloo_*.dll" should be put in garrysmod/lua/bin/
 require("mysqloo")
-include("../../config/mysql.lua") -- Load mysql credentials
+include("../../config/sv_mysql.lua") -- Load mysql credentials
 
 -- In case "gamemode/config/mysql.local.lua" exists, load it. 
 -- This is useful for keeping your database credentials out of your public repository or for local testing.
-if file.Exists(ATOMIC.Config.GamemodeFolderName .. "/gamemode/config/mysql.local.lua", "LUA") then include("../../config/mysql.local.lua") end
+if file.Exists(ATOMIC.Config.GamemodeFolderName .. "/gamemode/config/sv_mysql.local.lua", "LUA") then include("../../config/sv_mysql.local.lua") end
 
 local hostname = MYSQL_HOSTNAME or "localhost"
 local username = MYSQL_USERNAME or "atomic"

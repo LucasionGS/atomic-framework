@@ -1,0 +1,1 @@
+ATOMIC.Ranks = ATOMIC.Rank or {}

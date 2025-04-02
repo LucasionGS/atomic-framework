@@ -67,6 +67,9 @@ function Database:CreateQueryInterface(tableName)
 
     function queryObject:Select(...)
         self.selectColumns = {...}
+        if #self.selectColumns == 0 then
+            self.selectColumns = {"*"}
+        end
         return self
     end
 
@@ -99,6 +102,11 @@ function Database:CreateQueryInterface(tableName)
         return self
     end
 
+    function queryObject:Delete()
+        self.delete = true
+        return self
+    end
+
     function queryObject:UpdateEntry(primaryKey, ...)
         self.updateData = {...}
         self.where = self.where or {}
@@ -108,6 +116,14 @@ function Database:CreateQueryInterface(tableName)
 
     function queryObject:Table(tableName)
         self.fromTable = tableName
+        return self
+    end
+
+    function queryObject:Limit(offset, limit)
+        self.limit = { offset }
+        if limit ~= nil then
+            self.limit = { offset, limit }
+        end
         return self
     end
 
@@ -151,6 +167,9 @@ function Database:CreateQueryInterface(tableName)
                 end
             end
             query = query:sub(1, -5) .. ")"
+            if self.limit then
+                query = query .. " LIMIT " .. table.concat(self.limit, ", ")
+            end
             self.currentQuery = Database:Query(query, #values > 0 and values or nil, callback)
 
         elseif (self.insertData and self.fromTable) then
@@ -209,7 +228,31 @@ function Database:CreateQueryInterface(tableName)
                 end
             end
             query = query:sub(1, -5) .. ")"
+            if self.limit then
+                query = query .. " LIMIT " .. table.concat(self.limit, ", ")
+            end
             self.currentQuery = Database:Query(query, #values > 0 and values or nil, callback)
+        elseif (self.delete and self.fromTable) then
+            -- Delete query
+            local query = "DELETE FROM `" .. self.fromTable .. "` WHERE ("
+            local values = {}
+            for k, v in pairs(self.where) do
+                if type(v) == "table" then
+                    query = query .. v[1] .. " AND "
+                    for i = 2, #v do
+                        table.insert(values, v[i])
+                    end
+                else
+                    query = query .. v .. " AND "
+                end
+            end
+            query = query:sub(1, -5) .. ")"
+            if self.limit then
+                query = query .. " LIMIT " .. table.concat(self.limit, ", ")
+            end
+            self.currentQuery = Database:Query(query, #values > 0 and values or nil, callback)
+        else
+            error("No valid query was created.")
         end
 
         return self
@@ -258,10 +301,21 @@ function Database:CreateModel(tableName, columnsOrder, columnsDefinition)
         return Database:CreateQueryInterface():Raw(
             "SELECT COUNT(*) AS 'exists' " ..
             "FROM information_schema.tables " ..
-            "WHERE table_schema = '" .. "atomic" .. "' AND table_name = '" .. self.tableName .. "'"
+            "WHERE table_schema = '" .. "atomic" .. "' AND table_name = '" .. self.tableName .. "' " ..
+            "LIMIT 1"
         ):Transform(function(data)
             return data[1].exists == 1
         end):Run(callback)
+    end
+
+    function model:RowExists(column, value, callback)
+        return Database:CreateQueryInterface(self.tableName):Where({column .. " = ?", value}):Limit(1):Select():Transform(function(data)
+            return #data > 0
+        end):Run(callback)
+    end
+
+    function model:Delete(...)
+        return Database:CreateQueryInterface(self.tableName):Where(...):Delete()
     end
 
     function model:Select(...)

@@ -5,6 +5,7 @@ Database:CreateModel(
         "steamid64",
         "name",
         "playtime",
+        "rank",
         "createdAt",
         "lastJoin",
         "lastLeave"
@@ -14,6 +15,7 @@ Database:CreateModel(
         "steamid64 VARCHAR(255) NOT NULL UNIQUE",
         "name VARCHAR(255) NOT NULL",
         "playtime INT NOT NULL DEFAULT 0",
+        "rank INT NOT NULL DEFAULT 0",
         "createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
         "lastJoin DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
         "lastLeave DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
@@ -84,5 +86,26 @@ Database:CreateModel(
         "PRIMARY KEY (id)",
         "FOREIGN KEY (steamid64) REFERENCES players(steamid64)",
         "FOREIGN KEY (itemId) REFERENCES items(id)"
+    }
+)
+
+Database:CreateModel(
+    "ranks", 
+    {
+        "id",
+        "name",
+        "description",
+        "permissions",
+        "inherit",
+        "createdAt"
+    },
+    {
+        "id INT NOT NULL AUTO_INCREMENT",
+        "name VARCHAR(255) NOT NULL UNIQUE",
+        "description TEXT NOT NULL",
+        "permissions TEXT NOT NULL DEFAULT '[]'",
+        "inherit INT NOT NULL DEFAULT 0",
+        "createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+        "PRIMARY KEY (id)"
     }
 )

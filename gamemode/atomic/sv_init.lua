@@ -8,7 +8,7 @@ hook.Add("SV_ATOMIC:DatabaseConnected", "Atomic_SuccessfullyConnected", function
         local m = Database:Model(model)
         if not m:TableExists():Wait() then
             print("Creating table for model: " .. model)
-            m:CreateTable()
+            m:CreateTable():wait()
         end
     end
 end)
@@ -22,7 +22,14 @@ end)
 
 -- Once a player spawns for the first time, Load their data or create them.
 hook.Add("PlayerInitialSpawn", "Atomic_PlayerInitialSpawn", function(ply)
-    Database:Model("players"):Insert(
+    local PlayerModel = Database:Model("players")
+
+    if PlayerModel:RowExists("steamid64", ply:SteamID64()):Wait() then
+        print("Player already exists in the database: " .. ply:Nick())
+        return
+    end
+    
+    PlayerModel:Insert(
         {
             steamid64 = ply:SteamID64(),
             name = ply:Nick()

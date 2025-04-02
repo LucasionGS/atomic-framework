@@ -1,7 +1,7 @@
 ATOMIC = ATOMIC or {} -- Global for Atomic Framework. Important it's initialized early.
 -- Load config
-AddCSLuaFile("config/config.lua")
-include("config/config.lua")
+AddCSLuaFile("config/sh_config.lua")
+include("config/sh_config.lua")
 include("atomic/init.lua")
 
 --[[
