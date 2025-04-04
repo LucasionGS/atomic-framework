@@ -25,6 +25,11 @@ Triggered when the database connection fails to establish.
 ### DatabaseReady
 Triggered when the database is ready to be used. This is triggered after the database connection is established and the database has been initialized, and the tables created. This is useful for running queries that require the database to be ready.
 
+### OnPlayerDataLoaded
+- `ply` (Player) - The player whose data has been loaded.
+- `data` (table) - The player's data.
+Triggered when a player's data is loaded from the database and initialized.
+
 ### CanPlayerChangeJob
 - `ply` (Player) - The player who is trying to change their job.
 - `oldJob` (string) - The player's old job identifier.

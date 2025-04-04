@@ -4,6 +4,27 @@ hook.Add("PlayerInitialSpawn", "Atomic_PlayerInitialSpawn", function(ply)
 
     if PlayerModel:RowExists("steamid64", ply:SteamID64()):Wait() then
         print("Player already exists in the database: " .. ply:Nick())
+
+        -- Load player data
+        local playerData = PlayerModel:Select("*"):Where({"steamid64 = ?", ply:SteamID64()}):Limit(1):Run(function(playerData)
+            if playerData and playerData[1] then
+                playerData = playerData[1]
+            else 
+                playerData = nil
+            end
+            if playerData then
+                ply:SetNWString("ATOMIC_Name", playerData.name or ply:Nick())
+                ply:SetMoney(playerData.money or 0)
+                ply:SetBank(playerData.bank or 0)
+
+                -- Set the player's job
+                ply:SetJob(ATOMIC.Config.DefaultJob)
+                hook.Run("SV_ATOMIC:OnPlayerDataLoaded", ply, playerData)
+            else
+                print("Failed to load player data for: " .. ply:Nick())
+            end
+        end)
+
         return
     end
     
@@ -14,6 +35,8 @@ hook.Add("PlayerInitialSpawn", "Atomic_PlayerInitialSpawn", function(ply)
         }
     ):Run(function()
         print("Player inserted: " .. ply:Nick())
+        -- Set the player's data
+        ply:SetNWString("ATOMIC_Name", ply:Nick())
     end)
 end)
 
