@@ -14,6 +14,10 @@ function ATOMIC:Error(...)
     ErrorNoHalt("[Atomic Error]", ...)
 end
 
+function ATOMIC:Raise(...)
+    Error("[Atomic Raised Error]", ...)
+end
+
 -- Function to add files to the server or client based on their prefix
 -- Prefixes: sv_ (server), sh_ (shared), cl_ (client)
 -- (Taken from example on Garry's Mod wiki https://wiki.facepunch.com/gmod/Global.include)
