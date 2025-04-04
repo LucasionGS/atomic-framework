@@ -6,12 +6,14 @@ GM.Sandbox = true
 
 function ATOMIC:Debug(...)
     if ATOMIC.Config.Debug then
-        print("[Atomic Debug]", ...)
+        MsgC(Color(203, 152, 24),  "[Atomic Debug] ", Color(214, 214, 214), ...)
+        MsgC("\n")
     end
 end
 
 function ATOMIC:Error(...)
-    ErrorNoHalt("[Atomic Error]", ...)
+    MsgC(Color(203, 24, 24),  "[Atomic Error] ", Color(247, 197, 197), ...)
+    MsgC("\n")
 end
 
 function ATOMIC:Raise(...)
@@ -85,6 +87,9 @@ function GM:ContextMenuOpen()
     return false
 end
 
--- Include shared systems
+-- Fonts
 ATOMIC:AddFile("cl_fonts.lua", "gamemode/atomic/")
+-- Include systems
 ATOMIC:IncludeDir("gamemode/atomic/systems")
+-- User Interfaces
+ATOMIC:IncludeDir("gamemode/atomic/interfaces")

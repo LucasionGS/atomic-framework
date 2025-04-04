@@ -3,7 +3,6 @@ Database = {} -- Global for database functions
 
 Database.PrimaryKey = ATOMIC.Config.DatabasePrimaryKey or "id"
 Database.Models = Database.Models or {}
-Database.Debug = ATOMIC.Config.Debug or false
 
 --[[
     Executes a query on the database and calls the callback function with the data.
@@ -27,15 +26,15 @@ function Database:Query(query, values, callback, onErrorCallback)
 
     local q = SQL:query(query)
 
-    ATOMIC:Debug("Executing query: " .. query, values and "with values" or "")
+    -- ATOMIC:Debug("EXECUTING: " .. query, values and "with values" or "")
     
     function q:onSuccess(data)
-        ATOMIC:Debug("Successful query: " .. query)
+        ATOMIC:Debug(ATOMIC.Config.Colors.Success, "SUCCESS:   ", ATOMIC.Config.Colors.OffWhite, query)
         if callback then callback(data) end
     end
 
     function q:onError(err)
-        ATOMIC:Debug("Query failed: " .. err)
+        ATOMIC:Debug(ATOMIC.Config.Colors.Error, "FAILED: ", ATOMIC.Config.Colors.OffWhite, err)
         if onErrorCallback then onErrorCallback(err) end
     end
 

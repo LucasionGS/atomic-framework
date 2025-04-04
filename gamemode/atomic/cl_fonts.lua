@@ -20,3 +20,5 @@ surface.CreateFont("AtomicLarge", Font({ font = "AtomicNormal", size = 32 }))
 surface.CreateFont("AtomicLargeItalics", Font({ font = "AtomicLarge", italic = true }))
 surface.CreateFont("AtomicLargeBold", Font({ font = "AtomicLarge", weight = 700 }))
 surface.CreateFont("AtomicLargeBoldItalics", Font({ font = "AtomicLarge", weight = 700, italic = true }))
+
+surface.CreateFont("AtomicHud", Font({ font = "AtomicNormal", size = 24 }))

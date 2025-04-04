@@ -1,17 +1,5 @@
 ATOMIC.Jobs = ATOMIC.Jobs or {} -- Table to hold all job classes
 
-function ATOMIC.Jobs:Add(jobData)
-    -- Create a new job class
-    local jobClass = table.Copy(jobData)
-    setmetatable(jobClass, Job)
-
-    -- Add the job class to the jobs table
-    ATOMIC.Jobs[jobData.Identifier] = jobClass
-
-    -- Print a message to the console
-    print("Job " .. jobData.Name .. " added successfully!")
-end
-
 local Job = {}
 Job.__index = Job
 Job.Identifier = "job" -- This will be unique, and job files should be named sv_{Job.Identifier}.lua, e.g., sv_citizen.lua
@@ -78,10 +66,6 @@ function Job:OnJobRemoved(ply)
     -- This is a placeholder function and should be implemented based on your requirements
 end
 
--- Load all job files
-ATOMIC:IncludeDir("gamemode/atomic/jobs", "sv")
-
-
 --[[
     Player convenience functions
 ]]--
@@ -99,11 +83,13 @@ function playerMeta:GetJob()
 end
 
 -- Sets the players ATOMIC_Job data. This will begin the job assignment process.
-function playerMeta:SetJob(jobName)
+function playerMeta:SetJob(jobIdentifier)
+    if not jobIdentifier then return end
+    
     -- Unassign the current job
     local currentJob = self:GetJob()
 
-    local prevented, preventedReason = hook.Run("SV_ATOMIC:CanPlayerChangeJob", self, currentJob, jobName)
+    local prevented, preventedReason = hook.Run("SV_ATOMIC:CanPlayerChangeJob", self, currentJob, jobIdentifier)
 
     if prevented == false then
         ATOMIC:Notify(self, preventedReason and preventedReason or "You cannot change jobs right now.")
@@ -116,13 +102,14 @@ function playerMeta:SetJob(jobName)
     end
     
     -- Call the job assignment function
-    local job = ATOMIC.Jobs[jobName]
+    local job = ATOMIC.Jobs[jobIdentifier]
     if not job then
-        ATOMIC:Raise("Job " .. jobName .. " not found!")
+        ATOMIC:Raise("Job " .. jobIdentifier .. " not found!")
+        return;
     end
     
     -- Set the player's current job
-    self:SetNWString("ATOMIC_Job", jobName)
+    self:SetNWString("ATOMIC_Job", jobIdentifier)
     
     -- Call the job pre-loadout function
     job:OnJobAssigned(self)
@@ -131,7 +118,7 @@ function playerMeta:SetJob(jobName)
     Job:DefaultLoadout(self)
     job:OnLoadout(self)
 
-    hook.Run("SV_ATOMIC:PlayerJobChanged", self, currentJob, jobName)
+    hook.Run("SV_ATOMIC:PlayerJobChanged", self, currentJob, jobIdentifier)
 end
 
 util.AddNetworkString("ATOMIC:RequestJob")
@@ -155,3 +142,25 @@ net.Receive("ATOMIC:RequestJob", function(len, ply)
     -- Set the player's job
     ply:SetJob(jobName)
 end)
+
+--[[
+    Job management functions
+]]--
+function ATOMIC.Jobs:Add(identifier, jobData)
+    -- Create a new job class
+    local jobClass = Job:New(identifier, jobData.Name, jobData.Description, jobData.Model, jobData.Salary)
+
+    jobData.Identifier = identifier
+    
+    -- Add the job class to the jobs table
+    ATOMIC.Jobs[jobData.Identifier] = jobClass
+
+    -- Print a message to the console
+    ATOMIC:Debug("Job " .. jobData.Name .. " added successfully!")
+
+    return jobClass
+end
+
+
+-- Load all job files
+ATOMIC:IncludeDir("gamemode/atomic/jobs", "sv")

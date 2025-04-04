@@ -1,3 +1,11 @@
+function ATOMIC:SetPlayerSpeed(ply, multiplier)
+    if not IsValid(ply) or not ply:IsPlayer() then return end
+    -- ply:SetSlowWalkSpeed(1 * multiplier)
+    -- ply:SetWalkSpeed(1 * multiplier)
+    -- ply:SetRunSpeed(1 * multiplier)
+    print(ply:GetCrouchedWalkSpeed(), ply:GetSlowWalkSpeed(), ply:GetWalkSpeed(), ply:GetRunSpeed())
+end
+
 -- Once a player spawns for the first time, Load their data or create them.
 hook.Add("PlayerInitialSpawn", "Atomic_PlayerInitialSpawn", function(ply)
     local PlayerModel = Database:Model("players")
@@ -36,14 +44,13 @@ hook.Add("PlayerInitialSpawn", "Atomic_PlayerInitialSpawn", function(ply)
     ):Run(function()
         print("Player inserted: " .. ply:Nick())
         -- Set the player's data
-        ply:SetNWString("ATOMIC_Name", ply:Nick())
+        ply:SetNWString("ATOMIC_Name", "")
     end)
 end)
 
 -- Setup loadout
 hook.Add("PlayerLoadout", "Atomic_PlayerLoadout", function(ply)
-    ply:Give("weapon_physgun")
-    ply:Give("gmod_tool")
-
+    print("JOBS:", ply:GetJob(), ATOMIC.Config.DefaultJob)
+    ply:SetJob(ply:GetJob() or ATOMIC.Config.DefaultJob)
     return false
 end)
