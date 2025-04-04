@@ -17,4 +17,11 @@ ATOMIC.Config = {
     DatabasePrimaryKey = "id",
     -- Debug mode. If true, will print debug information to the console.
     Debug = true,
+
+    --[[
+        Job configuration
+    ]]--
+
+    -- The default job for players when they first spawn. This should be a valid job identifier.
+    DefaultJob = "citizen",
 }

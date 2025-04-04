@@ -8,7 +8,9 @@ Database:CreateModel(
         "rank",
         "createdAt",
         "lastJoin",
-        "lastLeave"
+        "lastLeave",
+        "kills",
+        "deaths",
     },
     {
         "id INT NOT NULL AUTO_INCREMENT",
@@ -19,6 +21,8 @@ Database:CreateModel(
         "createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
         "lastJoin DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
         "lastLeave DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+        "kills int(11) NOT NULL DEFAULT '0'",
+        "deaths int(11) NOT NULL DEFAULT '0'",
         "PRIMARY KEY (id)"
     }
 )
