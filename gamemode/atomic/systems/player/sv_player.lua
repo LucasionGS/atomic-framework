@@ -22,7 +22,7 @@ hook.Add("PlayerInitialSpawn", "Atomic_PlayerInitialSpawn", function(ply)
             end
             if playerData then
                 ply:SetNWString("ATOMIC_Name", playerData.name or ply:Nick())
-                ply:SetMoney(playerData.money or 0)
+                ply:SetCash(playerData.money or 0)
                 ply:SetBank(playerData.bank or 0)
 
                 -- Set the player's job

@@ -82,11 +82,11 @@ function ATOMIC:Dialog(title, text, options)
         local buttonHoverColor = option.hoverColor or Color(hvr.r, hvr.g, hvr.b, 230)
         
         button.Paint = function(self, w, h)
-            draw.RoundedBox(4, 0, 0, w, h, buttonColor)
+            draw.RoundedBox(6, 0, 0, w, h, buttonColor)
             if self:IsHovered() then
                 surface.SetDrawColor(buttonHoverColor)
                 surface.SetMaterial(gradient)
-                surface.DrawTexturedRectRotated(w / 2, h / 2, h, w, -90)
+                surface.DrawTexturedRectRotated(w / 2, h / 2, h, w, -90) -- Draw gradient from top to bottom
             end
         end
 

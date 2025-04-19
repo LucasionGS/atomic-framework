@@ -9,7 +9,11 @@ end
 -- Fetches the players ATOMIC_Job data. This holds the job identifier.
 function playerMeta:GetJob()
     -- Get the player's current job
-    return self:GetNWString("ATOMIC_Job", nil)
+    local job = self:GetNWString("ATOMIC_Job", nil)
+    if job and job ~= "" then
+        return job
+    end
+    return nil
 end
 
 -- Request to get a job

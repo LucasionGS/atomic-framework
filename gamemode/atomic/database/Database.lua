@@ -206,7 +206,9 @@ function Database:CreateQueryInterface(tableName)
             local query = "UPDATE `" .. self.fromTable .. "` SET "
             local values = {}
             for k, v in pairs(self.updateData) do
+                PrintTable(self.updateData)
                 if type(v) == "table" then
+                    print(v[1])
                     query = query .. v[1] .. ", "
                     for i = 2, #v do
                         table.insert(values, v[i])

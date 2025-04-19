@@ -71,7 +71,7 @@ function ATOMIC:DrawHUD()
     end
 
     -- Draw the money
-    local money = ply:GetMoney()
+    local money = ply:GetCash()
     local bank = ply:GetBank()
     draw.SimpleText("Money: " .. ATOMIC:MoneyToString(money), "AtomicHud", hudX, hudY + healthBarHeight + 30, colors.Text, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
     draw.SimpleText("Bank: " .. ATOMIC:MoneyToString(bank), "AtomicHud", hudX, hudY + healthBarHeight + 50, colors.Text, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)

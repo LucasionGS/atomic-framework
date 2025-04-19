@@ -79,7 +79,11 @@ end
 -- Fetches the players ATOMIC_Job data. This holds the job identifier.
 function playerMeta:GetJob()
     -- Get the player's current job
-    return self:GetNWString("ATOMIC_Job", nil)
+    local job = self:GetNWString("ATOMIC_Job", nil)
+    if job and job ~= "" and ATOMIC.Jobs[job] then
+        return job
+    end
+    return nil
 end
 
 -- Sets the players ATOMIC_Job data. This will begin the job assignment process.
@@ -110,7 +114,14 @@ function playerMeta:SetJob(jobIdentifier)
     
     -- Set the player's current job
     self:SetNWString("ATOMIC_Job", jobIdentifier)
-    
+    -- Set job information
+    self:SetNWString("ATOMIC_Job_Name", job.Name)
+    self:SetNWString("ATOMIC_Job_Description", job.Description)
+    self:SetNWString("ATOMIC_Job_Model", job.Model)
+    self:SetNWInt("ATOMIC_Job_Salary", job.Salary)
+    -- Set the player's job model
+    self:SetModel(job.Model)
+
     -- Call the job pre-loadout function
     job:OnJobAssigned(self)
     -- Call the job loadout functions

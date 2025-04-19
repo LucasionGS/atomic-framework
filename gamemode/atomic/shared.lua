@@ -77,14 +77,16 @@ end
 
 -- Handles the sandbox spawn menu (Q menu)
 function GM:SpawnMenuOpen()
-    ATOMIC:Notify(nil, "Atomic Framework: Spawn menu is disabled.")
-    return false
+    -- ATOMIC:Notify(nil, "Atomic Framework: Spawn menu is disabled.")
+    -- return false
+    return true
 end
 
 -- Handles the sandbox C menu
 function GM:ContextMenuOpen()
-    ATOMIC:Notify(nil, "Atomic Framework: Context menu is disabled.")
-    return false
+    -- ATOMIC:Notify(nil, "Atomic Framework: Context menu is disabled.")
+    -- return false
+    return true
 end
 
 -- Fonts
@@ -93,3 +95,9 @@ ATOMIC:AddFile("cl_fonts.lua", "gamemode/atomic/")
 ATOMIC:IncludeDir("gamemode/atomic/systems")
 -- User Interfaces
 ATOMIC:IncludeDir("gamemode/atomic/interfaces")
+-- Some systems are only loaded when database is ready.
+hook.Add("SV_ATOMIC:DatabaseReady", "Atomic_Systems", function()
+    -- Items
+    ATOMIC:IncludeDir("gamemode/atomic/items")
+    PrintTable(ATOMIC.Items)
+end)

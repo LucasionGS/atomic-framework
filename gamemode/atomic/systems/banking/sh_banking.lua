@@ -4,8 +4,8 @@
 local playerMeta = FindMetaTable("Player")
 
 -- Get the player's current money
-function playerMeta:GetMoney()
-    return self:GetNWInt("ATOMIC_Money", 0)
+function playerMeta:GetCash()
+    return self:GetNWInt("ATOMIC_Cash", 0)
 end
 
 -- Get the player's current bank balance
