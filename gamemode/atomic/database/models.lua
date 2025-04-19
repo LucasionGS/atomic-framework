@@ -62,6 +62,7 @@ Database:CreateModel(
     {
         "id",
         "name",
+        "displayName",
         "description",
         "permissions",
         "inherit",
@@ -70,6 +71,7 @@ Database:CreateModel(
     {
         "id INT NOT NULL AUTO_INCREMENT",
         "name VARCHAR(255) NOT NULL UNIQUE",
+        "displayName VARCHAR(255) NOT NULL",
         "description TEXT NOT NULL",
         "permissions TEXT NOT NULL DEFAULT '[]'",
         "inherit INT NOT NULL DEFAULT 0",
