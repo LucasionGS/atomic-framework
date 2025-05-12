@@ -26,7 +26,7 @@ function Database:Query(query, values, callback, onErrorCallback)
 
     local q = SQL:query(query)
 
-    -- ATOMIC:Debug("EXECUTING: " .. query, values and "with values" or "")
+    ATOMIC:Debug("EXECUTING: " .. query, values and "with values" or "")
     
     function q:onSuccess(data)
         ATOMIC:Debug(ATOMIC.Config.Colors.Success, "SUCCESS:   ", ATOMIC.Config.Colors.OffWhite, query)
@@ -153,19 +153,8 @@ function Database:CreateQueryInterface(tableName)
             self.currentQuery = Database:Query(self.rawQuery, callback)
         elseif (self.selectColumns and self.fromTable) then
             -- Select query
-            local query = "SELECT " .. table.concat(self.selectColumns, ", ") .. " FROM `" .. self.fromTable .. "` WHERE ("
-            local values = {}
-            for k, v in pairs(self.where) do
-                if type(v) == "table" then
-                    query = query .. v[1] .. " AND "
-                    for i = 2, #v do
-                        table.insert(values, v[i])
-                    end
-                else
-                    query = query .. v .. " AND "
-                end
-            end
-            query = query:sub(1, -5) .. ")"
+            local whereClause, values = GenerateWhereClause(self.where)
+            local query = "SELECT " .. table.concat(self.selectColumns, ", ") .. " FROM `" .. self.fromTable .. "` " .. whereClause
             if self.limit then
                 query = query .. " LIMIT " .. table.concat(self.limit, ", ")
             end
@@ -204,7 +193,7 @@ function Database:CreateQueryInterface(tableName)
         elseif (self.updateData and self.fromTable) then
             -- Update query
             local query = "UPDATE `" .. self.fromTable .. "` SET "
-            local values = {}
+            local whereClause, values = GenerateWhereClause(self.where)
             for k, v in pairs(self.updateData) do
                 PrintTable(self.updateData)
                 if type(v) == "table" then
@@ -217,43 +206,21 @@ function Database:CreateQueryInterface(tableName)
                     query = query .. v .. ", "
                 end
             end
-            query = query:sub(1, -3) .. " WHERE ("
-            for k, v in pairs(self.where) do
-                if type(v) == "table" then
-                    query = query .. v[1] .. " AND "
-                    for i = 2, #v do
-                        table.insert(values, v[i])
-                    end
-                else
-                    query = query .. v .. " AND "
-                end
-            end
-            query = query:sub(1, -5) .. ")"
+            query = query:sub(1, -3) .. " " .. whereClause
             if self.limit then
                 query = query .. " LIMIT " .. table.concat(self.limit, ", ")
             end
             self.currentQuery = Database:Query(query, #values > 0 and values or nil, callback)
         elseif (self.delete and self.fromTable) then
             -- Delete query
-            local query = "DELETE FROM `" .. self.fromTable .. "` WHERE ("
-            local values = {}
-            for k, v in pairs(self.where) do
-                if type(v) == "table" then
-                    query = query .. v[1] .. " AND "
-                    for i = 2, #v do
-                        table.insert(values, v[i])
-                    end
-                else
-                    query = query .. v .. " AND "
-                end
-            end
-            query = query:sub(1, -5) .. ")"
+            local whereClause, values = GenerateWhereClause(self.where)
+            local query = "DELETE FROM `" .. self.fromTable .. "` " .. whereClause
             if self.limit then
                 query = query .. " LIMIT " .. table.concat(self.limit, ", ")
             end
             self.currentQuery = Database:Query(query, #values > 0 and values or nil, callback)
         else
-            error("No valid query was created.")
+            ATOMIC:Raise("No valid query was created.")
         end
 
         return self
@@ -356,6 +323,29 @@ end
 
 function Database:Model(tableName)
     return Database.Models[tableName]
+end
+
+-- Helper functions
+function GenerateWhereClause(where)
+    local values = {}
+    
+    if where == nil or #where == 0 then
+        return "", values
+    end
+    
+    local whereClause = "WHERE "
+    
+    for k, v in pairs(where) do
+        if type(v) == "table" then
+            whereClause = whereClause .. v[1] .. " AND "
+            for i = 2, #v do
+                table.insert(values, v[i])
+            end
+        else
+            whereClause = whereClause .. k .. " = '" .. SQL:escape(v) .. "' AND "
+        end
+    end
+    return whereClause:sub(1, -5), values
 end
 
 include("models.lua")

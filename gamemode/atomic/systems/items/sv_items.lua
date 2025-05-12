@@ -28,5 +28,3 @@ function ITEM:New(data)
 
     return self
 end
-
-ply:isuper

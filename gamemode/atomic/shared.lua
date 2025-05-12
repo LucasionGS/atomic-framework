@@ -4,45 +4,37 @@ GM.Name = ATOMIC.Config.Name
 GM.Author = ATOMIC.Config.Author
 GM.Sandbox = true
 
-function ATOMIC:Debug(...)
-    if ATOMIC.Config.Debug then
-        MsgC(Color(203, 152, 24),  "[Atomic Debug] ", Color(214, 214, 214), ...)
-        MsgC("\n")
-    end
-end
-
-function ATOMIC:Error(...)
-    MsgC(Color(203, 24, 24),  "[Atomic Error] ", Color(247, 197, 197), ...)
-    MsgC("\n")
-end
-
-function ATOMIC:Raise(...)
-    Error("[Atomic Raised Error]", ...)
-end
-
 -- Function to add files to the server or client based on their prefix
 -- Prefixes: sv_ (server), sh_ (shared), cl_ (client)
 -- (Taken from example on Garry's Mod wiki https://wiki.facepunch.com/gmod/Global.include)
 function ATOMIC:AddFile( File, directory )
+    local function Debug(...)
+        if ATOMIC and ATOMIC.Debug then
+            ATOMIC:Debug(...)
+        else
+            MsgC(...)
+        end
+    end
+
     local prefix = string.lower( string.Left( File, 3 ) )
 
     if SERVER and prefix == "sv_" then
         include( ATOMIC.Config.GamemodeFolderName .. "/" .. directory .. File )
-        ATOMIC:Debug( "[AUTOLOAD] SERVER INCLUDE: " .. File )
+        Debug( "[AUTOLOAD] SERVER INCLUDE: " .. File )
     elseif prefix == "sh_" then
         if SERVER then
             AddCSLuaFile( ATOMIC.Config.GamemodeFolderName .. "/" .. directory .. File )
-            ATOMIC:Debug( "[AUTOLOAD] SHARED ADDCS: " .. File )
+            Debug( "[AUTOLOAD] SHARED ADDCS: " .. File )
         end
         include( ATOMIC.Config.GamemodeFolderName .. "/" .. directory .. File )
-        ATOMIC:Debug( "[AUTOLOAD] SHARED INCLUDE: " .. File )
+        Debug( "[AUTOLOAD] SHARED INCLUDE: " .. File )
     elseif prefix == "cl_" then
         if SERVER then
             AddCSLuaFile( ATOMIC.Config.GamemodeFolderName .. "/" .. directory .. File )
-            ATOMIC:Debug( "[AUTOLOAD] CLIENT ADDCS: " .. File )
+            Debug( "[AUTOLOAD] CLIENT ADDCS: " .. File )
         elseif CLIENT then
             include( ATOMIC.Config.GamemodeFolderName .. "/" .. directory .. File )
-            ATOMIC:Debug( "[AUTOLOAD] CLIENT INCLUDE: " .. File )
+            Debug( "[AUTOLOAD] CLIENT INCLUDE: " .. File )
         end
     end
 end
@@ -51,11 +43,19 @@ end
 -- Recursively includes all files in the directory and its subdirectories
 -- (Taken from example on Garry's Mod wiki https://wiki.facepunch.com/gmod/Global.include)
 function ATOMIC:IncludeDir( directory, prefix )
+    local function Debug(...)
+        if ATOMIC and ATOMIC.Debug then
+            ATOMIC:Debug(...)
+        else
+            MsgC(...)
+        end
+    end
+
     directory = directory .. "/"
 
     local files, directories = file.Find( ATOMIC.Config.GamemodeFolderName .. "/" .. directory .. "*", "LUA" )
 
-    ATOMIC:Debug("Importing " .. ATOMIC.Config.GamemodeFolderName .. "/" .. directory .. "...")
+    Debug("Importing " .. ATOMIC.Config.GamemodeFolderName .. "/" .. directory .. "...")
 
     for _, v in ipairs( files ) do
         if string.EndsWith( v, ".lua" ) then
@@ -70,7 +70,7 @@ function ATOMIC:IncludeDir( directory, prefix )
     end
 
     for _, v in ipairs( directories ) do
-        ATOMIC:Debug( "[AUTOLOAD] Directory: " .. v )
+        Debug( "[AUTOLOAD] Directory: " .. v )
         ATOMIC:IncludeDir( directory .. v )
     end
 end
@@ -89,6 +89,7 @@ function GM:ContextMenuOpen()
     return true
 end
 
+ATOMIC:IncludeDir("gamemode/atomic/utility")
 -- Fonts
 ATOMIC:AddFile("cl_fonts.lua", "gamemode/atomic/")
 -- Include systems

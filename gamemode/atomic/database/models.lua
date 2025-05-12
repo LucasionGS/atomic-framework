@@ -61,6 +61,7 @@ Database:CreateModel(
     "ranks", 
     {
         "id",
+        "index",
         "name",
         "displayName",
         "description",
@@ -70,6 +71,7 @@ Database:CreateModel(
     },
     {
         "id INT NOT NULL AUTO_INCREMENT",
+        "index INT NOT NULL",
         "name VARCHAR(255) NOT NULL UNIQUE",
         "displayName VARCHAR(255) NOT NULL",
         "description TEXT NOT NULL",
