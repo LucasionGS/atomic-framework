@@ -351,4 +351,12 @@ function GenerateWhereClause(where)
     return whereClause:sub(1, -5), values
 end
 
+function TableToDatabaseParameters(t)
+    local params = {}
+    for k, v in pairs(t) do
+        table.insert(params, "`" .. k .. "` = '" .. SQL:escape(v) .. "'")
+    end
+    return unpack(params)
+end
+
 include("models.lua")

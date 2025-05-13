@@ -163,7 +163,7 @@ ATOMIC:AddCommand("deletecharacter", function(player, args)
     
     local CharacterModel = Database:Model("characters")
     
-    CharacterModel:Delete():Where({"steamid64 = ?", steamid, "id = ?", characterid}):Run(function(result)
+    CharacterModel:Delete():Where({"steamid64 = ?", steamid} ,{ "id = ?", characterid}):Run(function(result)
         if IsValid(player) then
             ATOMIC:Notify(player, "Character " .. characterid .. " for SteamID " .. steamid .. " has been deleted.")
         end
@@ -198,7 +198,7 @@ ATOMIC:AddCommand("setcharactermoney", function(player, args)
     -- Update the database
     local CharacterModel = Database:Model("characters")
     
-    CharacterModel:Update({"money = amount"}):Where({"id = ?", target:GetCharacter()}):Run()
+    CharacterModel:Update({"money = ?", amount}):Where({"id = ?", target:GetCharacter()}):Run()
     
     ATOMIC:Notify(player, "Set " .. target:Nick() .. "'s money to " .. ATOMIC:MoneyToString(amount) .. ".")
     ATOMIC:Notify(target, "Your money has been set to " .. ATOMIC:MoneyToString(amount) .. " by an administrator.")
@@ -232,7 +232,7 @@ ATOMIC:AddCommand("setcharacterbank", function(player, args)
     -- Update the database
     local CharacterModel = Database:Model("characters")
     
-    CharacterModel:Update({bank = amount}):Where({"id = ?", target:GetCharacter()}):Run()
+    CharacterModel:Update({"bank = ?", amount}):Where({"id = ?", target:GetCharacter()}):Run()
     
     ATOMIC:Notify(player, "Set " .. target:Nick() .. "'s bank balance to " .. ATOMIC:MoneyToString(amount) .. ".")
     ATOMIC:Notify(target, "Your bank balance has been set to " .. ATOMIC:MoneyToString(amount) .. " by an administrator.")

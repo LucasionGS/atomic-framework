@@ -1,4 +1,5 @@
 -- Client-side crafting menu
+ATOMIC.Crafting = ATOMIC.Crafting or {}
 
 -- Create the crafting menu
 function ATOMIC.Crafting:OpenMenu()

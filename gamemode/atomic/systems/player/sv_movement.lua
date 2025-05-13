@@ -30,10 +30,10 @@ hook.Add("PlayerSpawn", "ATOMIC:SetupPlayerMovement", function(ply)
             local strengthLevel = 0
             local enduranceLevel = 0
             
-            Database:Model("attributes"):Where({
+            Database:Model("attributes"):Where(
                 {"characterId = ?", ply:GetCharacter()}, 
                 {"type = ?", ATOMIC.AttributeTypes.SKILL}
-            }):Select():Run(function(data)
+            ):Select():Run(function(data)
                 if data then
                     for _, attr in ipairs(data) do
                         if attr.attribute == "agility" then
@@ -229,11 +229,11 @@ function ATOMIC.Attributes:GetStatValue(ply, stat, callback)
     
     local charID = char
     
-    Database:Model("attributes"):Where({
+    Database:Model("attributes"):Where(
         {"characterId = ?", charID}, 
         {"type = ?", ATOMIC.AttributeTypes.STAT}, 
         {"attribute = ?", stat}
-    }):Select():Run(function(data)
+    ):Select():Run(function(data)
         if not data or #data == 0 then
             -- Return default value if stat not found
             local defaultValue = (self.Stats[stat] and self.Stats[stat].default) or 0

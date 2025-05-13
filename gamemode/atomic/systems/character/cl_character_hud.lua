@@ -88,8 +88,8 @@ hook.Add("HUDPaint", "ATOMIC:CharacterStatusHUD", function()
     local charName = ply:GetCharacterName() or "Unknown Character"
     draw.SimpleText(charName, "DermaDefault", HUD.x + HUD.padding, HUD.y - 25 + HUD.textPadding, HUD.textColor)
     
-    local money = ply:GetMoney() or 0
-    local moneyText = "$" .. string.Comma(money)
+    local money = ply:GetCash() or 0
+    local moneyText = ATOMIC:MoneyToString(money)
     local moneyWidth = surface.GetTextSize(moneyText)
     draw.SimpleText(moneyText, "DermaDefault", HUD.x + HUD.width - moneyWidth - HUD.padding, 
         HUD.y - 25 + HUD.textPadding, Color(100, 255, 100, 255))

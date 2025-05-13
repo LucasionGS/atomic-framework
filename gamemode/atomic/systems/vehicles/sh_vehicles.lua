@@ -24,7 +24,7 @@ function ATOMIC:CanAffordVehicle(ply, vehicleId)
     local vehicle = ATOMIC.Vehicles[vehicleId]
     if not vehicle then return false end
     
-    return ply:GetMoney() >= vehicle.BasePrice
+    return ply:GetCash() >= vehicle.BasePrice
 end
 
 -- Get all vehicles in a category

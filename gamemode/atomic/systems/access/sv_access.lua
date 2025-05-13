@@ -4,7 +4,7 @@ hook.Add("SV_ATOMIC:DatabaseReady", "Atomic_Ranks", function()
     local RankModel = Database:Model("ranks")
 
     local existingRanks = RankModel:Select():Run():Wait()
-    PrintTable(existingRanks)
+    ATOMIC:Debug("Loaded " .. #existingRanks .. " ranks.")
     if existingRanks and #existingRanks > 0 then
         -- If ranks already exist, do not create default ranks
         return

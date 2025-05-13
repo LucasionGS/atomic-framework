@@ -294,7 +294,7 @@ if SERVER then
         local CharacterModel = Database:Model("characters")
         
         -- Check if the character belongs to the player
-        CharacterModel:Select("*"):Where({"id = ?", characterID, "steamid64 = ?", self:SteamID64()}):Limit(1):Run(function(data)
+        CharacterModel:Select("*"):Where({"id = ?", characterID, }, { "steamid64 = ?", self:SteamID64()}):Limit(1):Run(function(data)
             if not data or not data[1] then
                 if callback then
                     callback(false, "Character not found.")

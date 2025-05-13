@@ -2,10 +2,8 @@
 
 -- Initialize all attributes for a character
 function ATOMIC.Attributes:InitializeCharacter(ply)
-    local char = ply:GetCharacter()
-    if not char then return end
-    
-    local charID = char.id
+    local charID = ply:GetCharacter()
+    if charID == 0 then return end
     
     -- Load existing attributes from database
     Database:Model("attributes"):Where({"characterId = ?", charID}):Select():Run(function(data)
@@ -54,10 +52,8 @@ end
 
 -- Sync all attributes to client
 function ATOMIC.Attributes:SyncCharacterAttributes(ply)
-    local char = ply:GetCharacter()
-    if not char then return end
-    
-    local charID = char.id
+    local charID = ply:GetCharacter()
+    if charID == 0 then return end
     
     Database:Model("attributes"):Where({"characterId = ?", charID}):Select():Run(function(data)
         if not IsValid(ply) then return end
@@ -70,16 +66,14 @@ end
 
 -- Set an attribute value and synchronize it
 function ATOMIC.Attributes:SetAttribute(ply, type, attribute, value, xp)
-    local char = ply:GetCharacter()
-    if not char then return end
+    local charID = ply:GetCharacter()
+    if charID == 0 then return end
     
-    local charID = char.id
-    
-    Database:Model("attributes"):Where({
+    Database:Model("attributes"):Where(
         {"characterId = ?", charID}, 
         {"type = ?", type}, 
         {"attribute = ?", attribute}
-    }):Select():Run(function(data)
+    ):Select():Run(function(data)
         if not data or #data == 0 then
             -- Create attribute if it doesn't exist
             Database:Model("attributes"):Insert({
@@ -97,11 +91,11 @@ function ATOMIC.Attributes:SetAttribute(ply, type, attribute, value, xp)
             if value ~= nil then updateData.value = value end
             if xp ~= nil then updateData.xp = xp end
             
-            Database:Model("attributes"):Where({
+            Database:Model("attributes"):Where(
                 {"characterId = ?", charID}, 
                 {"type = ?", type}, 
                 {"attribute = ?", attribute}
-            }):Update(updateData):Run(function()
+            ):Update(TableToDatabaseParameters(updateData)):Run(function()
                 self:SyncCharacterAttributes(ply)
             end)
         end
@@ -111,16 +105,14 @@ end
 -- Add XP to a skill and check for level ups
 function ATOMIC.Attributes:AddSkillXP(ply, skill, xpAmount)
     if xpAmount <= 0 then return end
-    local char = ply:GetCharacter()
-    if not char then return end
+    local charID = ply:GetCharacter()
+    if charID == 0 then return end
     
-    local charID = char.id
-    
-    Database:Model("attributes"):Where({
+    Database:Model("attributes"):Where(
         {"characterId = ?", charID}, 
         {"type = ?", ATOMIC.AttributeTypes.SKILL}, 
         {"attribute = ?", skill}
-    }):Select():Run(function(data)
+    ):Select():Run(function(data)
         if not data or #data == 0 then
             -- Create skill if it doesn't exist
             Database:Model("attributes"):Insert({
@@ -139,11 +131,11 @@ function ATOMIC.Attributes:AddSkillXP(ply, skill, xpAmount)
             local currentLevel = data[1].value or 0
             local newXP = math.min(currentXP + xpAmount, self.Config.MaxXP)
             
-            Database:Model("attributes"):Where({
+            Database:Model("attributes"):Where(
                 {"characterId = ?", charID}, 
                 {"type = ?", ATOMIC.AttributeTypes.SKILL}, 
                 {"attribute = ?", skill}
-            }):Update({{"value = ?, xp = ?", currentLevel, newXP}}):Run(function()
+            ):Update({{"value = ?, xp = ?", currentLevel, newXP}}):Run(function()
                 self:CheckForLevelUp(ply, skill, currentLevel, newXP)
                 self:SyncCharacterAttributes(ply)
             end)
@@ -156,16 +148,15 @@ function ATOMIC.Attributes:CheckForLevelUp(ply, skill, currentLevel, totalXP)
     local newLevel = self:GetLevelFromXP(totalXP)
     
     if newLevel > currentLevel then
-        local char = ply:GetCharacter()
-        if not char then return end
-        local charID = char.id
+        local charID = ply:GetCharacter()
+        if charID == 0 then return end
         
         -- Update the level
-        Database:Model("attributes"):Where({
+        Database:Model("attributes"):Where(
             {"characterId = ?", charID}, 
             {"type = ?", ATOMIC.AttributeTypes.SKILL}, 
             {"attribute = ?", skill}
-        }):Update({{"value = ?", newLevel}}):Run(function()
+        ):Update({{"value = ?", newLevel}}):Run(function()
             -- Notify player of level up
             ply:EmitSound(self.Config.LevelUpSound)
             
@@ -193,16 +184,14 @@ end
 
 -- Adjust a stat by a delta amount
 function ATOMIC.Attributes:AdjustStatValue(ply, stat, delta)
-    local char = ply:GetCharacter()
-    if not char then return end
+    local charID = ply:GetCharacter()
+    if charID == 0 then return end
     
-    local charID = char.id
-    
-    Database:Model("attributes"):Where({
+    Database:Model("attributes"):Where(
         {"characterId = ?", charID}, 
         {"type = ?", ATOMIC.AttributeTypes.STAT}, 
         {"attribute = ?", stat}
-    }):Select():Run(function(data)
+    ):Select():Run(function(data)
         if not data or #data == 0 then
             -- Create with default value if it doesn't exist
             local defaultValue = (self.Stats[stat] and self.Stats[stat].default) or 0
@@ -237,8 +226,8 @@ end
 
 -- Reset all attributes for a character
 function ATOMIC.Attributes:ResetAttributes(ply)
-    local char = ply:GetCharacter()
-    if not char then return end
+    local charID = ply:GetCharacter()
+    if charID == 0 then return end
     
     -- Check if player has enough money
     if not ply:CanAfford(self.Config.ResetCost) then
@@ -249,21 +238,19 @@ function ATOMIC.Attributes:ResetAttributes(ply)
     -- Take money
     ply:TakeMoney(self.Config.ResetCost)
     
-    local charID = char.id
-    
     -- Reset all skills to 0
-    Database:Model("attributes"):Where({
+    Database:Model("attributes"):Where(
         {"characterId = ?", charID}, 
         {"type = ?", ATOMIC.AttributeTypes.SKILL}
-    }):Update({{"value = ?, xp = ?", 0, 0}}):Run()
+    ):Update({{"value = ?, xp = ?", 0, 0}}):Run()
     
     -- Reset all stats to default values
     for statID, statData in pairs(self.Stats) do
-        Database:Model("attributes"):Where({
+        Database:Model("attributes"):Where(
             {"characterId = ?", charID}, 
             {"type = ?", ATOMIC.AttributeTypes.STAT},
             {"attribute = ?", statID}
-        }):Update({{"value = ?", statData.default or 0}}):Run()
+        ):Update({{"value = ?", statData.default or 0}}):Run()
     end
     
     -- Sync back to client
