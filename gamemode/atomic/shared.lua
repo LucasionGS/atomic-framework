@@ -93,12 +93,35 @@ ATOMIC:IncludeDir("gamemode/atomic/utility")
 -- Fonts
 ATOMIC:AddFile("cl_fonts.lua", "gamemode/atomic/")
 -- Include systems
-ATOMIC:IncludeDir("gamemode/atomic/systems")
+ATOMIC:AddFile("sh_notifications.lua", "gamemode/atomic/systems/")
+
+-- Attribute system
+ATOMIC:AddFile("sh_attributes.lua", "gamemode/atomic/systems/")
+ATOMIC:AddFile("sv_attributes.lua", "gamemode/atomic/systems/")
+ATOMIC:AddFile("cl_attributes.lua", "gamemode/atomic/systems/")
+
+ATOMIC:IncludeDir("gamemode/atomic/systems/dialog")
+ATOMIC:IncludeDir("gamemode/atomic/systems/commands")
+ATOMIC:IncludeDir("gamemode/atomic/systems/access")
+ATOMIC:IncludeDir("gamemode/atomic/systems/admin")
+ATOMIC:IncludeDir("gamemode/atomic/systems/banking")
+ATOMIC:IncludeDir("gamemode/atomic/systems/character")
+ATOMIC:IncludeDir("gamemode/atomic/systems/drugs")
+ATOMIC:IncludeDir("gamemode/atomic/systems/inventory")
+ATOMIC:IncludeDir("gamemode/atomic/systems/items")
+ATOMIC:IncludeDir("gamemode/atomic/systems/job")
+ATOMIC:IncludeDir("gamemode/atomic/systems/npcs")
+ATOMIC:IncludeDir("gamemode/atomic/systems/player")
+ATOMIC:IncludeDir("gamemode/atomic/systems/properties")
+-- Survival system
+ATOMIC:IncludeDir("gamemode/atomic/systems/survival")
+-- Crafting system
+ATOMIC:IncludeDir("gamemode/atomic/systems/crafting")
 -- User Interfaces
 ATOMIC:IncludeDir("gamemode/atomic/interfaces")
 -- Some systems are only loaded when database is ready.
 hook.Add("SV_ATOMIC:DatabaseReady", "Atomic_Systems", function()
     -- Items
     ATOMIC:IncludeDir("gamemode/atomic/items")
-    PrintTable(ATOMIC.Items)
+    ATOMIC:Debug("Loaded " .. #ATOMIC.Items .. " items.")
 end)

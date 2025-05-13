@@ -11,7 +11,7 @@ hook.Add("PlayerInitialSpawn", "Atomic_PlayerInitialSpawn", function(ply)
     local PlayerModel = Database:Model("players")
 
     if PlayerModel:RowExists("steamid64", ply:SteamID64()):Wait() then
-        print("Player already exists in the database: " .. ply:Nick())
+        ATOMIC:Debug("Player already exists in the database: " .. ply:Nick())
 
         -- Load player data
         local playerData = PlayerModel:Select("*"):Where({"steamid64 = ?", ply:SteamID64()}):Limit(1):Run(function(playerData)
@@ -20,37 +20,70 @@ hook.Add("PlayerInitialSpawn", "Atomic_PlayerInitialSpawn", function(ply)
             else 
                 playerData = nil
             end
+            
             if playerData then
                 ply:SetNWString("ATOMIC_Name", playerData.name or ply:Nick())
-                ply:SetCash(playerData.money or 0)
-                ply:SetBank(playerData.bank or 0)
-
-                -- Set the player's job
-                ply:SetJob(ATOMIC.Config.DefaultJob)
+                
+                -- Set default values (these will be overridden by character data once a character is selected)
+                ply:SetCash(0)
+                ply:SetBank(0)
+                
                 hook.Run("SV_ATOMIC:OnPlayerDataLoaded", ply, playerData)
             else
-                print("Failed to load player data for: " .. ply:Nick())
+                ATOMIC:Error("Failed to load player data for: " .. ply:Nick())
             end
         end)
 
         return
     end
     
+    -- Create new player record
     PlayerModel:Insert(
         {
             steamid64 = ply:SteamID64(),
-            name = ""
+            name = ply:Nick()
         }
     ):Run(function()
-        print("Player inserted: " .. ply:Nick())
-        -- Set the player's data
-        ply:SetNWString("ATOMIC_Name", "")
+        ATOMIC:Debug("Player inserted: " .. ply:Nick())
+        
+        -- Set default values
+        ply:SetNWString("ATOMIC_Name", ply:Nick())
+        ply:SetCash(0)
+        ply:SetBank(0)
     end)
 end)
 
 -- Setup loadout
 hook.Add("PlayerLoadout", "Atomic_PlayerLoadout", function(ply)
-    print("JOBS:", ply:GetJob(), ATOMIC.Config.DefaultJob)
-    ply:SetJob(ply:GetJob() or ATOMIC.Config.DefaultJob)
+    -- If the player doesn't have a character, don't give them weapons
+    if not ply:HasCharacter() then
+        ply:StripWeapons()
+        ply:StripAmmo()
+        
+        -- Don't allow movement
+        ply:Freeze(true)
+        
+        return true
+    end
+    
+    -- Otherwise, let the job handle the loadout
+    local job = ply:GetJob() or ATOMIC.Config.DefaultJob
+    ply:SetJob(job)
+    
+    -- Allow movement
+    ply:Freeze(false)
+    
     return false
+end)
+
+-- Save character data on disconnect
+hook.Add("PlayerDisconnected", "Atomic_SavePlayerData", function(ply)
+    if ply:HasCharacter() then
+        ply:SaveCharacter()
+    end
+end)
+
+-- Save all character data on server shutdown
+hook.Add("ShutDown", "Atomic_SaveAllPlayerData", function()
+    ATOMIC:SaveAllCharacters()
 end)

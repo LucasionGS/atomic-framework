@@ -4,11 +4,11 @@ end
 
 hook.Add("SV_ATOMIC:DatabaseConnected", "Atomic_SuccessfullyConnected", function()
     print("Atomic Framework: Database connected.")
-    for model in pairs(Database.Models) do
+    for i, model in ipairs(Database.ModelOrder) do
         local m = Database:Model(model)
         if not m:TableExists():Wait() then
             print("Creating table for model: " .. model)
-            m:CreateTable():wait()
+            local res = m:CreateTable():wait()
         end
     end
 

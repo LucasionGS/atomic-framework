@@ -3,6 +3,7 @@ Database = {} -- Global for database functions
 
 Database.PrimaryKey = ATOMIC.Config.DatabasePrimaryKey or "id"
 Database.Models = Database.Models or {}
+Database.ModelOrder = Database.ModelOrder or {}
 
 --[[
     Executes a query on the database and calls the callback function with the data.
@@ -35,6 +36,7 @@ function Database:Query(query, values, callback, onErrorCallback)
 
     function q:onError(err)
         ATOMIC:Debug(ATOMIC.Config.Colors.Error, "FAILED: ", ATOMIC.Config.Colors.OffWhite, err)
+        ATOMIC:Debug(ATOMIC.Config.Colors.Error, "QUERY: ", ATOMIC.Config.Colors.OffWhite, query)
         if onErrorCallback then onErrorCallback(err) end
     end
 
@@ -44,7 +46,7 @@ function Database:Query(query, values, callback, onErrorCallback)
 end
 
 function Database:CreateTable(tableName, columns, callback)
-    local query = "CREATE TABLE IF NOT EXISTS " .. tableName .. " ("
+    local query = "CREATE TABLE IF NOT EXISTS `" .. tableName .. "` ("
     for k, v in pairs(columns) do
         query = query .. v .. ","
     end
@@ -174,7 +176,7 @@ function Database:CreateQueryInterface(tableName)
 
                     local columnString = "("
                     for k, _ in pairs(v) do
-                        columnString = columnString .. k .. ","
+                        columnString = columnString .. "`" .. k .. "`" .. ","
                     end
                     query = query .. columnString:sub(1, -2) .. ") VALUES "
                 end
@@ -317,6 +319,7 @@ function Database:CreateModel(tableName, columnsOrder, columnsDefinition)
     end
 
     Database.Models[tableName] = model
+    table.insert(Database.ModelOrder, tableName)
     
     return model
 end
